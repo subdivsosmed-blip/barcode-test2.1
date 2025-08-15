@@ -1,0 +1,286 @@
+/* Reset box-sizing supaya padding & border nggak nambah ukuran */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  margin: 20px;
+  text-align: center;
+  background: #ffeef6; /* default terang */
+  color: #000;
+  transition: background-color 0.3s, color 0.3s;
+  
+}
+
+body.dark {
+  background: #121212;
+  color: #eee;
+}
+
+h1 {
+  color: #007bff;
+  font-weight: 900;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+body.dark h1 {
+  color: #66aaff;
+}
+
+textarea {
+  width: 350px;
+  max-width: 90vw;
+  height: 120px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid #000;
+  margin: 10px 0;
+  resize: vertical;
+  font-family: monospace;
+  background: #fff;
+  color: #000;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+body.dark textarea {
+  background: #333;
+  color: #eee;
+  border-color: #666;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  width: 350px;
+  max-width: 90vw;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+  user-select: none;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+#toggleTheme {
+  background: #444;
+  margin-bottom: 30px;
+}
+
+#toggleTheme:hover {
+  background: #666;
+}
+
+body.dark #toggleTheme {
+  background: #66aaff;
+  color: #121212;
+}
+
+body.dark #toggleTheme:hover {
+  background: #88bbff;
+}
+
+.mockup-container {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  
+}
+
+.iphone {
+  background: #fff;
+  width: 430px;
+  height: 932px;
+  position: relative;
+  overflow: hidden;
+  padding-top: 60px;
+  box-sizing: border-box;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+  color: #000;
+  /* border-radius: 40px; */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  user-select: none;
+}
+
+body.dark .iphone {
+  background: #222;
+  color: #eee;
+  box-shadow: 0 8px 20px rgba(255,255,255,0.1);
+}
+
+.status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  font-weight: 500;
+  color: #000;
+  background: #fff;
+  z-index: 2;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+  user-select: none;
+}
+
+body.dark .status-bar {
+  background: #111;
+  color: #eee;
+}
+
+.divider {
+  position: absolute;
+  top: 47px;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: #dedede;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  z-index: 1;
+  transition: background-color 0.3s;
+}
+
+body.dark .divider {
+  background: #444;
+}
+
+.status-left {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 550;
+  letter-spacing: 0.3px;
+}
+
+
+.status-right img {
+  height: 14px;
+  filter: invert(0);
+  transition: filter 0.3s;
+  user-select: none;
+  pointer-events: none;
+}
+
+
+
+
+
+body.dark .status-right img {
+  filter: invert(1);
+}
+
+.top-link {
+  color: #007aff;
+  position: absolute;
+  left: 20px;
+  top: 70px;
+  font-size: 20px;
+  text-decoration: none;
+  transition: color 0.3s;
+  user-select: none;
+}
+
+body.dark .top-link {
+  color: #66aaff;
+}
+
+h2.mockup-title {
+  margin: 30px 0 40px;
+  font-weight: 700;
+  font-size: 40px;
+}
+
+.label {
+  margin-bottom: 30px;
+  color: inherit;
+  word-break: break-word;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.block {
+  margin-bottom: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.barcode-canvas {
+  width: 500px;
+  height: 600px;
+  image-rendering: pixelated;
+  background: white;
+  /* border-radius: 6px; */
+  transition: background-color 0.3s;
+  user-select: none;
+}
+
+body.dark .barcode-canvas {
+  background: #333;
+}
+
+.home-indicator {
+  width: 140px;
+  height: 5px;
+  background: #000;
+  opacity: 0.2;
+  border-radius: 3px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: background-color 0.3s;
+}
+
+body.dark .home-indicator {
+  background: #eee;
+  opacity: 0.15;
+}
+body.dark {
+  background: #1f1f20; /* abu-abu gelap ala iPhone */
+  color: #eee;
+}
+
+body.dark .iphone {
+  background: #1c1c1e; /* abu-abu gelap sedikit lebih terang */
+  color: #eee;
+}
+
+body.dark .status-bar {
+  background: #1c1c1e;
+  color: #eee;
+}
+
+body.dark .divider {
+  background: #3a3a3c; /* warna divider abu-abu netral */
+}
+body.dark .status-bar {
+  background: #000; /* hitam */
+  color: #eee;      /* biar teks jamnya tetap terlihat */
+}
+
+
+/* Home indicator putih di dark mode */
+body.dark .home-indicator {
+  background: #fff;
+  opacity: 1;
+}

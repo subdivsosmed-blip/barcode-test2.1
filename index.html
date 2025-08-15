@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Barcode Generator & Mockup</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+
+<body>
+  <button id="toggleTheme">Toggle Mode Gelap/Terang</button>
+
+  <h1>BARCODE GENERATOR</h1>
+
+  <form id="imeiForm">
+    <textarea id="imeiList" placeholder="Masukkan daftar IMEI (2 baris = 1 perangkat, baris pertama = IMEI1, baris kedua = IMEI2)"></textarea><br />
+    <button type="submit">Tampilkan Semua Barcode</button>
+  </form>
+
+  <div class="mockup-container" id="mockupContainer"></div>
+
+  <!-- Library JsBarcode -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <!-- Library html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    const toggleBtn = document.getElementById("toggleTheme");
+    const body = document.body;
+
+    toggleBtn.addEventListener("click", () => {
+      body.classList.toggle("dark");
+      const isDark = body.classList.contains("dark");
+      document.querySelectorAll(".status-right img").forEach((img) => {
+        img.src = isDark ? "statusbar-dark.png" : "statusbar.png";
+      });
+    });
+
+    function updateTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const timeString = `${hours}.${minutes}`;
+      document.querySelectorAll(".status-left").forEach((el) => {
+        el.textContent = timeString;
+      });
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    const form = document.getElementById("imeiForm");
+    const container = document.getElementById("mockupContainer");
+
+    function scaleCanvas(canvas, width, height, scale = 3) {
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    }
+
+    function generateEID(imei1, imei2) {
+      const part1 = imei1.substring(0, 14);
+      const part2 = (imei2 || "").substring(0, 14);
+      let eid = part1 + part2;
+      while (eid.length < 32) {
+        eid += Math.floor(Math.random() * 10);
+      }
+      return eid;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      container.innerHTML = "";
+
+      const imeiLines = document.getElementById("imeiList").value
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line !== "");
+
+      // Pecah per 2 baris jadi [imei1, imei2]
+      let imeiPairs = [];
+      for (let i = 0; i < imeiLines.length; i += 2) {
+        imeiPairs.push([imeiLines[i] || "", imeiLines[i + 1] || ""]);
+      }
+
+      if (imeiPairs.length === 0) {
+        alert("Mohon isi minimal 1 perangkat (2 baris IMEI)!");
+        return;
+      }
+
+      for (let idx = 0; idx < imeiPairs.length; idx++) {
+        const imei1 = imeiPairs[idx][0];
+        const imei2 = imeiPairs[idx][1];
+        const meid = imei1.substring(0, 14);
+        const eid = generateEID(imei1, imei2);
+
+        const div = document.createElement("div");
+        div.className = "iphone";
+        div.innerHTML = `
+          <div class="status-bar">
+            <div class="status-left">--:--</div>
+            <div class="status-right">
+              <img src="${body.classList.contains('dark') ? 'statusbar-dark.png' : 'statusbar.png'}" alt="WiFi dan Baterai" />
+            </div>
+          </div>
+          <div class="divider"></div>
+          <a href="#" class="top-link">Cancel</a> <br><br><br><br>
+          <h2 class="mockup-title">Device Info</h2>
+
+          <div class="block">
+            <div class="label">EID ${eid}</div>
+            <canvas id="eid-${idx}" class="barcode-canvas"></canvas>
+          </div>
+
+          <div class="block">
+            <div class="label">IMEI ${imei1}</div>
+            <canvas id="bc1-${idx}" class="barcode-canvas"></canvas>
+          </div>
+
+          ${imei2.trim() !== "" ? `
+            <div class="block">
+              <div class="label">IMEI2 ${imei2}</div>
+              <canvas id="bc2-${idx}" class="barcode-canvas"></canvas>
+            </div>
+          ` : ""}
+
+          <div class="block">
+            <div class="label">MEID ${meid}</div>
+            <canvas id="bc3-${idx}" class="barcode-canvas"></canvas>
+          </div>
+
+          <div class="home-indicator"></div>
+        `;
+
+        container.appendChild(div);
+
+        // Barcode IMEI1
+        const canvas1 = document.getElementById(`bc1-${idx}`);
+        scaleCanvas(canvas1, 210, 65, 3);
+        JsBarcode(canvas1, imei1, { format: "CODE128", width: 4, height: 100, displayValue: false, margin: 35 });
+
+        // Barcode IMEI2
+        if (imei2.trim() !== "") {
+          const canvas2 = document.getElementById(`bc2-${idx}`);
+          scaleCanvas(canvas2, 210, 65, 3);
+          JsBarcode(canvas2, imei2, { format: "CODE128", width: 4, height: 100, displayValue: false, margin: 35 });
+        }
+
+        // Barcode MEID
+        const canvas3 = document.getElementById(`bc3-${idx}`);
+        scaleCanvas(canvas3, 170, 65, 3);
+        JsBarcode(canvas3, meid, { format: "CODE128", width: 5, height: 100, displayValue: false, margin: 35 });
+
+        // Barcode EID
+        const canvasEid = document.getElementById(`eid-${idx}`);
+        scaleCanvas(canvasEid, 330, 60, 3);
+        JsBarcode(canvasEid, eid, { format: "CODE128", width: 5, height: 100, displayValue: false, margin: 35 });
+
+        // Set jam sebelum screenshot
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, "0");
+        const minutes = now.getMinutes().toString().padStart(2, "0");
+        div.querySelector(".status-left").textContent = `${hours}.${minutes}`;
+
+        // Konversi ke IMG
+        const imgCanvas = await html2canvas(div, { scale: 3 });
+        const imgEl = document.createElement("img");
+        imgEl.src = imgCanvas.toDataURL("image/png");
+        imgEl.style.width = "100%";
+        imgEl.style.borderRadius = "12px";
+        div.replaceWith(imgEl);
+      }
+    });
+  </script>
+
+</body>
+
+</html>
